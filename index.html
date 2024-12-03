@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Glue Finder</title>
+    <title>Math Research</title>
     <link id="favicon" rel="icon" href="data:image/png;base64,iVBORw0KGgo=" /> <!-- Default blank favicon -->
     <style>
         /* Main page styling */
@@ -119,6 +119,7 @@
         <input type="text" id="buttonColor" placeholder="e.g., 0,0,0" />
 
         <button onclick="saveSettings()">Save</button>
+        <button onclick="resetSettings()">Reset</button>
         <button onclick="closeSettings()">Close</button>
     </div>
 
@@ -141,6 +142,14 @@
 
         const animatedTextElement = document.getElementById('animatedText');
         let currentIndex = 0;
+
+        const defaultSettings = {
+            websiteName: "Math Research",
+            favicon: "data:image/png;base64,iVBORw0KGgo=",
+            bgColor: "0,0,0",
+            textColor: "0,255,0",
+            buttonColor: "0,0,0",
+        };
 
         function typeText() {
             if (currentIndex < selectedText.length) {
@@ -175,10 +184,11 @@
 
             const newWindow = window.open("about:blank", "_blank");
             if (newWindow) {
+                const title = document.title;
                 newWindow.document.write(`
                     <html>
                     <head>
-                        <title>Embedded Content</title>
+                        <title>${title}</title>
                         <style>
                             html, body { margin: 0; padding: 0; height: 100%; overflow: hidden; background-color: black; color: green; font-family: monospace; }
                             iframe { width: 100vw; height: 100vh; border: none; }
@@ -206,13 +216,17 @@
         }
 
         function saveSettings() {
-            const name = document.getElementById('websiteName').value;
+            const name = document.getElementById('websiteName').value || defaultSettings.websiteName;
             const faviconFile = document.getElementById('faviconFile').files[0];
-            const bgColor = document.getElementById('bgColor').value;
-            const textColor = document.getElementById('textColor').value;
-            const buttonColor = document.getElementById('buttonColor').value;
+            const bgColor = document.getElementById('bgColor').value || defaultSettings.bgColor;
+            const textColor = document.getElementById('textColor').value || defaultSettings.textColor;
+            const buttonColor = document.getElementById('buttonColor').value || defaultSettings.buttonColor;
 
-            if (name) localStorage.setItem('websiteName', name);
+            localStorage.setItem('websiteName', name);
+            localStorage.setItem('bgColor', bgColor);
+            localStorage.setItem('textColor', textColor);
+            localStorage.setItem('buttonColor', buttonColor);
+
             if (faviconFile) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
@@ -220,39 +234,51 @@
                     applySettings();
                 };
                 reader.readAsDataURL(faviconFile);
+            } else {
+                applySettings();
             }
-            if (bgColor) localStorage.setItem('bgColor', bgColor);
-            if (textColor) localStorage.setItem('textColor', textColor);
-            if (buttonColor) localStorage.setItem('buttonColor', buttonColor);
 
-            applySettings();
+            closeSettings();
+        }
+
+        function resetSettings() {
+            localStorage.clear();
+            applySettings(true);
             closeSettings();
         }
 
         function loadSettings() {
-            const name = localStorage.getItem('websiteName');
-            const favicon = localStorage.getItem('favicon');
-            const bgColor = localStorage.getItem('bgColor');
-            const textColor = localStorage.getItem('textColor');
-            const buttonColor = localStorage.getItem('buttonColor');
+            const name = localStorage.getItem('websiteName') || defaultSettings.websiteName;
+            const favicon = localStorage.getItem('favicon') || defaultSettings.favicon;
+            const bgColor = localStorage.getItem('bgColor') || defaultSettings.bgColor;
+            const textColor = localStorage.getItem('textColor') || defaultSettings.textColor;
+            const buttonColor = localStorage.getItem('buttonColor') || defaultSettings.buttonColor;
 
-            if (name) document.title = name;
-            if (favicon) document.getElementById('favicon').href = favicon;
-            if (bgColor) document.body.style.backgroundColor = `rgb(${bgColor})`;
-            if (textColor) {
-                document.body.style.color = `rgb(${textColor})`;
-                document.querySelector('h1').style.color = `rgb(${textColor})`;
-            }
-            if (buttonColor) {
-                document.querySelectorAll('button').forEach(btn => {
-                    btn.style.backgroundColor = `rgb(${buttonColor})`;
-                    btn.style.color = `rgb(${textColor})`;
-                });
-            }
+            document.title = name;
+            document.getElementById('favicon').href = favicon;
+            document.body.style.backgroundColor = `rgb(${bgColor})`;
+            document.body.style.color = `rgb(${textColor})`;
+            document.querySelector('h1').style.color = `rgb(${textColor})`;
+            document.querySelectorAll('button').forEach(btn => {
+                btn.style.backgroundColor = `rgb(${buttonColor})`;
+                btn.style.color = `rgb(${textColor})`;
+            });
         }
 
-        function applySettings() {
-            loadSettings();
+        function applySettings(reset = false) {
+            if (reset) {
+                document.title = defaultSettings.websiteName;
+                document.getElementById('favicon').href = defaultSettings.favicon;
+                document.body.style.backgroundColor = `rgb(${defaultSettings.bgColor})`;
+                document.body.style.color = `rgb(${defaultSettings.textColor})`;
+                document.querySelector('h1').style.color = `rgb(${defaultSettings.textColor})`;
+                document.querySelectorAll('button').forEach(btn => {
+                    btn.style.backgroundColor = `rgb(${defaultSettings.buttonColor})`;
+                    btn.style.color = `rgb(${defaultSettings.textColor})`;
+                });
+            } else {
+                loadSettings();
+            }
         }
     </script>
 </body>
