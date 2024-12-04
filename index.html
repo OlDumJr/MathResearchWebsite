@@ -87,6 +87,18 @@
             font-size: 16px;
             cursor: pointer;
         }
+
+        /* New button in bottom left corner */
+        #redirectButton {
+            position: fixed;
+            bottom: 20px;
+            left: 20px;
+            padding: 10px 20px;
+            background-color: black;
+            color: green;
+            border: 1px solid green;
+            font-family: monospace;
+        }
     </style>
 </head>
 <body>
@@ -123,18 +135,22 @@
         <button onclick="closeSettings()">Close</button>
     </div>
 
+    <!-- Button to redirect to another website -->
+    <button id="redirectButton" onclick="redirectToWebsite()">Go to Website</button>
+
     <script>
         const texts = [
             "V2",
             "In memory of db100.boxd.africa",
-            "whats a calculator",
+            "whats a calc",
             "you",
             "we",
             "i see you",
             "what if i just deleted this right now",
             "block",
             "dont fall",
-            "made with love and 7 bricks"
+            "now has over 300 lines of code!",
+            "pudding"
         ];
 
         const randomIndex = Math.floor(Math.random() * texts.length);
@@ -279,6 +295,10 @@
             } else {
                 loadSettings();
             }
+        }
+
+        function redirectToWebsite() {
+            window.location.href = "https://howtojoin.mathresearch.top"; // Replace with your desired URL
         }
     </script>
 </body>
